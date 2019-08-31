@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Chip from "@material-ui/core/Chip";
 import CloseIcon from "@material-ui/icons/Close";
 import SearchIcon from "@material-ui/icons/Search";
+import Slide from "@material-ui/core/Slide";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   IconButton,
@@ -20,8 +21,14 @@ const useStyles = makeStyles({
     marginLeft: -160
   },
   card: {
-    marginBottom: 12,
-    width: 320
+    position: "fixed",
+    bottom: 20,
+    paddingBottom: 50,
+    display: "flex",
+    flexDirection: "column",
+    marginLeft: -12,
+    zIndex: -1,
+    maxWidth: 344
   },
   closeButton: {
     position: "absolute",
@@ -68,6 +75,14 @@ const useStyles = makeStyles({
     backgroundColor: "white",
     width: 320,
     overflowX: "scroll"
+  },
+  widgetNoBorder: {
+    border: "none",
+    boxSizing: "border-box",
+    padding: 10,
+    backgroundColor: "white",
+    width: 320,
+    overflowX: "scroll"
   }
 });
 
@@ -89,36 +104,42 @@ const topics = [
 const App = props => {
   const classes = useStyles();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [chosenTopic, setChosenTopic] = useState(false);
+  const [chosenTopic, setChosenTopic] = useState(null);
 
   return (
     <div className={classes.root}>
       {chosenTopic ? (
-        <Card className={classes.card}>
-          <CardContent>
-            <Typography className={classes.title} color="textSecondary">
-              {chosenTopic.title}
-              <IconButton
-                className={classes.closeButton}
-                size="small"
-                onClick={() => {
-                  setChosenTopic(null);
-                }}
-              >
-                <CloseIcon className={classes.closeButtonIcon} />
-              </IconButton>
-            </Typography>
+        <Slide
+          direction="up"
+          in={chosenTopic !== null}
+          mountOnEnter
+          unmountOnExit
+        >
+          <Card className={classes.card}>
+            <CardContent>
+              <Typography className={classes.title} color="textSecondary">
+                {chosenTopic.title}
+                <IconButton
+                  className={classes.closeButton}
+                  size="small"
+                  onClick={() => {
+                    setChosenTopic(null);
+                  }}
+                >
+                  <CloseIcon className={classes.closeButtonIcon} />
+                </IconButton>
+              </Typography>
 
-            <Typography
-              variant="body2"
-              component="p"
-              dangerouslySetInnerHTML={{ __html: chosenTopic.content }}
-            ></Typography>
-          </CardContent>
-        </Card>
+              <Typography
+                variant="body2"
+                component="p"
+                dangerouslySetInnerHTML={{ __html: chosenTopic.content }}
+              ></Typography>
+            </CardContent>
+          </Card>
+        </Slide>
       ) : null}
-
-      <div className={classes.widget}>
+      <div className={chosenTopic ? classes.widgetNoBorder : classes.widget}>
         <div className={classes.header}>
           <span>People ask:</span>
         </div>
